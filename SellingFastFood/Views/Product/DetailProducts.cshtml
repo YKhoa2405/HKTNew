@@ -1,0 +1,146 @@
+﻿@model SellingFastFood.Models.ProductEvaluate
+@{
+    ViewBag.Title = "Chi tiết sản phẩm";
+    Layout = "~/Views/Shared/BaseView.cshtml";
+}
+
+
+<!--Thanh điều hướng-->
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <nav class="breadcrumb bg-light mb-30">
+                <a class="breadcrumb-item text-dark" href="~/Product">Sản phẩm</a>
+                <li class="breadcrumb-item text-dark">@Model.Product.ProductName</li>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Shop Detail Start -->
+<div class="container-fluid pb-5">
+    <div class="row px-xl-5">
+        <div class="col-lg-5 mb-30">
+            <img class="img-fluid w-100" src="@Model.Product.ImageProduct" style="max-width: 100%; max-height: 550px;" alt="@Model.Product.ProductName">
+        </div>
+
+        <div class="col-lg-7 h-auto mb-30">
+            <div class="h-100 bg-light p-30">
+                <!--Tên sản phẩm-->
+                <h3>@Model.Product.ProductName</h3>
+                <!--Giá sản phẩm-->
+                <h3 class="font-weight-semi-bold mb-4">@String.Format("{0:#,##0.##}", Model.Product.Price) VND</h3>
+                <div class="d-flex mb-3">
+                    <strong class="text-dark mr-3">Danh mục:</strong>
+                    <p class="mb-4">@Model.Product.Category.CategoryName</p>
+                </div>
+                <div class="d-flex mb-3">
+                    @if (Model.Product.BestSeller == true)
+                    {
+                        <strong class="text-dark mr-3">Sản phẩm bán chạy </strong>
+                    }
+                </div>
+                <div class="d-flex align-items-center mb-4 pt-2">
+                    <a href="@Url.Action("AddToCart", "Cart", new { id = Model.Product.ProductID })" class="btn btn-primary px-3">
+                        <i class="fa fa-shopping-cart mr-1"></i>Thêm vào giỏ hàng
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Mô tả sản phẩm-->
+    <div class="row px-xl-5">
+        <div class="col">
+            <div class="bg-light p-30">
+                <div class="nav nav-tabs mb-4">
+                    <a class="nav-item nav-link text-dark active" data-toggle="tab" href="#tab-pane-1">Mô tả</a>
+                    <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-2">Bình luận</a>
+                </div>
+
+                <div class="tab-content">
+                    <!--Mô tả-->
+                    <div class="tab-pane fade show active" id="tab-pane-1">
+                        <h4 class="mb-3">Mô tả sản phẩm: @Model.Product.ProductName</h4>
+                        <p>@Model.Product.Description</p>
+                    </div>
+                    <!--Bình luận-->
+                    <div class="tab-pane fade" id="tab-pane-2">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4 class="mb-4">@ViewBag.CountEva đánh giá cho @Model.Product.ProductName</h4>
+                                @foreach (var item in Model.Evaluates)
+                                {
+                                    <div class="media mb-4">
+                                        <div class="media-body">
+                                            <h6>@item.User.UserName<small> - <i>@item.EvaluateDate</i></small></h6>
+                                            <div class="text-primary mb-2">
+                                                @for (int i = 1; i <= 5; i++)
+                                                {
+                                                    if (i <= item.Rating)
+                                                    {
+                                                        <i class="fas fa-star"></i>
+                                                    }
+                                                    else if (i - 0.5 <= item.Rating)
+                                                    {
+                                                        <i class="fas fa-star-half-alt"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="far fa-star"></i>
+                                                    }
+                                                }
+                                            </div>
+                                            <p>@item.EvaluateContent</p>
+                                        </div>
+                                    </div>
+                                }
+                                </div>
+                            <div class="col-md-6">
+                                <h4 class="mb-4">Để lại đánh giá</h4>
+                                <small>Các trường đánh dấu là bắt buột *</small>
+                                <form action="@Url.Action("Evaluate","Product")" method="post">
+                                    <div class="d-flex my-3">
+                                        <p class="mb-0 mr-2">Đánh giá của bạn * :</p>
+                                        <div class="text-primary" id="stars">
+                                            <i id="star1" class="far fa-star" onclick="selectStar(1)"></i>
+                                            <i id="star2" class="far fa-star" onclick="selectStar(2)"></i>
+                                            <i id="star3" class="far fa-star" onclick="selectStar(3)"></i>
+                                            <i id="star4" class="far fa-star" onclick="selectStar(4)"></i>
+                                            <i id="star5" class="far fa-star" onclick="selectStar(5)"></i>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="Rating" id="Rating" value="0">
+                                    <input type="hidden" name="ProductID" id="ProductID" value="@Model.Product.ProductID">
+                                    <div class="form-group">
+                                        <label for="EvaluateContent">Nội dung đánh giá *</label>
+                                        <textarea id="EvaluateContent" name="EvaluateContent" cols="30" rows="5" class="form-control"></textarea>
+                                    </div>
+                                    <div class="form-group mb-0">
+                                        <input type="submit" value="Đánh giá " class="btn btn-primary px-3">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Shop Detail End -->
+
+<script>
+    function selectStar(starNumber) {
+        for (let i = 1; i <= 5; i++) {
+            let star = document.getElementById('star' + i);
+            if (i <= starNumber) {
+                star.classList.remove('far');
+                star.classList.add('fas');
+            } else {
+                star.classList.remove('fas');
+                star.classList.add('far');
+            }
+        }
+        document.getElementById('Rating').value = starNumber;
+    }
+</script>

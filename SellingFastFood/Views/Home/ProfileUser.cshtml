@@ -1,0 +1,122 @@
+﻿@model List<SellingFastFood.Models.Order>
+@{
+    ViewBag.Title = "Hồ sơ";
+    Layout = "~/Views/Shared/BaseView.cshtml";
+}
+
+
+@{ var UserLogin = Session["User"] as SellingFastFood.Models.User; }
+<div class="container emp-profile">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="profile-img">
+                <img src="@UserLogin.Avatar" alt="Ảnh hồ sơ" />
+                <div class="file btn btn-lg btn-primary">
+                    Change Photo
+                    <input type="file" name="file" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="profile-head">
+                <h5>@UserLogin.UserName</h5>
+                <h6>
+                    Thành viên bạc
+                </h6>
+                <p class="proile-rating"><span></span></p>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Thông tin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Edit Profile" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-8">
+            <div class="tab-content profile-tab" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Mã người dùng</label>
+                        </div>
+                        <div class="col-md-6">
+                            <p>@UserLogin.UserID</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Email</label>
+                        </div>
+                        <div class="col-md-6">
+                            <p>@UserLogin.Email</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Số điện thoại</label>
+                        </div>
+                        <div class="col-md-6">
+                            <p>@UserLogin.Phone</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Đơn hàng</a>
+            </li>
+        </ul>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Tên đơn hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Địa chỉ giao hàng</th>
+                    <th>Tổng thanh toán</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+                @if (Model != null && Model.Count > 0)
+                {
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.OrderName</td>
+                                <td>@item.OrderCreationeDate</td>
+                                <td>@item.DeliveryAddress</td>
+                                <td>@string.Format("{0:#,##0} VNĐ", item.TotalMoney)</td>
+                                @if (@item.OrderStatus == 2)
+                                {
+                                    <td class="text-success">Hoàn thành</td>
+                                }
+                                else
+                                {
+                                    <td class="text-danger">Chưa hoàn thành</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                }
+                else
+                {
+                    <div class="alert alert-danger">
+                        <strong>Không có đơn hàng nào!</strong>
+                    </div>
+                }
+
+        </table>
+    </div>
+</div>
+
+

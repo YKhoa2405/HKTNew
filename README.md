@@ -1,0 +1,2 @@
+-Thêm db.bacpac vào sql server
+-Sau đó kết nối model ở folder model, sau đó code chức năng

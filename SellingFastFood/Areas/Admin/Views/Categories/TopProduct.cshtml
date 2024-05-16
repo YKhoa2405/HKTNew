@@ -1,0 +1,57 @@
+﻿@model IEnumerable<SellingFastFood.Models.Product>
+
+@{
+    ViewBag.Title = "TopProduct";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Top sản phẩm bán chạy tháng @ViewBag.currentMonth</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            Tên
+        </th>
+        <th>
+            Hình ảnh
+        </th>
+
+        <th>
+            Giá
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Discount)
+        </th>
+        <th>
+            Mô tả
+        </th>
+        <th>
+            Danh mục
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProductName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ImageProduct)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Price)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Discount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Category.CategoryName)
+        </td>
+    </tr>
+}
+
+</table>

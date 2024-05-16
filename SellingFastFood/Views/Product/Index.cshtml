@@ -1,0 +1,87 @@
+﻿@model SellingFastFood.Models.CategoryProduct
+@{
+    ViewBag.Title = "Thực đơn";
+    Layout = "~/Views/Shared/BaseView.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <nav class="breadcrumb bg-light mb-30">
+                <a class="breadcrumb-item text-dark" href="~/Product">Thực đơn</a>
+                <li class="breadcrumb-item text-dark">Danh sách sản phẩm</li>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Shop Start -->
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <!-- Shop Sidebar Start -->
+        <div class="col-lg-3 col-md-4">
+
+            <!-- Lọc theo thương hiệu -->
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Danh mục</span></h5>
+            @foreach (var item in Model.Categories)
+            {
+                <a href="@Url.Action("ProductByCategory", "Product", new {id = item.CategoryID})" class="h6 text-decoration-none text-truncate">
+                    <div class="bg-light p-3 ">
+                        @item.CategoryName
+                    </div>
+                </a>
+            }
+        </div>
+
+        <!-- Shop Product Start -->
+        <div class="col-lg-9 col-md-8">
+            <div class="row pb-3">
+                <div class="col-12 pb-1">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div></div>
+                        <div class="ml-2">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">Sắp xếp theo giá</button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="@Url.Action("Index", new { search = ViewBag.SearchTerm, maxPrice = ViewBag.MaxPrice, sortOrder = "priceAsc" })">Thấp đến cao</a>
+                                    <a class="dropdown-item" href="@Url.Action("Index", new { search = ViewBag.SearchTerm, maxPrice = ViewBag.MaxPrice, sortOrder = "priceDesc" })">Cao đến thấp</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @foreach (var item in Model.Products)
+                {
+                    <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+                        <div class="product-item bg-light mb-4">
+                            <div class="product-img position-relative overflow-hidden">
+                                <img class="img-fluid w-100" src="@item.ImageProduct" style="max-width: 100%; max-height: 400px;" alt="@item.ProductName">
+                                <div class="product-action">
+                                    <a class="btn btn-outline-dark btn-square" href="@Url.Action("AddToCart", "Cart", new { id = item.ProductID })"><i class="fa fa-shopping-cart"></i></a>
+                                    <a class="btn btn-outline-dark btn-square" href="@Url.Action("DetailProducts", "Product", new { id = item.ProductID })"><i class="fa fa-eye"></i></a>
+                                </div>
+                            </div>
+                            <div class="text-center py-4">
+                                <a class="h6 text-decoration-none text-truncate" href="#"><h5><b>@item.ProductName</b></h5></a>
+                                <div class="d-flex align-items-center justify-content-center mt-2">
+                                    <h5>@String.Format("{0:#,##0.##}", item.Price) VND</h5>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-center mt-1">
+                                    <h5>@item.Category.CategoryName</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(ViewBag.Message))
+                {
+                    <div class="alert alert-danger col-12 pb-1" role="alert">
+                        @ViewBag.Message
+                    </div>
+                }
+            </div>
+        </div>
+        <!-- Shop Product End -->
+    </div>
+</div>
+<!-- Shop End -->
