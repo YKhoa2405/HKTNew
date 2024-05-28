@@ -1,0 +1,22 @@
+﻿
+@{
+    ViewBag.Title = "CheckOutError";
+    Layout = "~/Views/Shared/BaseView.cshtml";
+}
+
+<div class="container text-center mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <img src="~/Content/image/close.png" class="img-fluid mb-4" alt="Success Image" style="max-width: 250px;">
+                    <h4 class="card-title text-success mb-5">Đặt hàng thất bại!</h4>
+                    <p class="card-text"><b>HKT Fastfood</b> xin lỗi quý khách vì sự cố.</p>
+                    <p class="card-text">Hãy thử đặt lại đơn hàng.</p>
+                    <a href="@Url.Action("","Home")" class="btn btn-primary mb-2 mt-2">Trở về trang chủ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

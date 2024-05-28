@@ -83,7 +83,7 @@
                     <th>Ngày đặt</th>
                     <th>Địa chỉ giao hàng</th>
                     <th>Tổng thanh toán</th>
-                    <th>Trạng thái</th>
+                    <th>Phương thức thanh toán</th>
                 </tr>
             </thead>
                 @if (Model != null && Model.Count > 0)
@@ -96,13 +96,13 @@
                                 <td>@item.OrderCreationeDate</td>
                                 <td>@item.DeliveryAddress</td>
                                 <td>@string.Format("{0:#,##0} VNĐ", item.TotalMoney)</td>
-                                @if (@item.OrderStatus == 2)
+                                @if (@item.PaymentMethod == 1)
                                 {
-                                    <td class="text-success">Hoàn thành</td>
+                                    <td class="text-success">Thanh toán khi nhận hàng</td>
                                 }
                                 else
                                 {
-                                    <td class="text-danger">Chưa hoàn thành</td>
+                                    <td class="text-danger">Thanh toán qua ví Paypal</td>
                                 }
                             </tr>
                         }

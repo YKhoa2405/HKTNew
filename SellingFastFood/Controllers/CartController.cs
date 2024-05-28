@@ -1,9 +1,15 @@
-﻿using SellingFastFood.Models;
+﻿using PayPal.Api;
+using SellingFastFood.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 
 namespace SellingFastFood.Controllers
 {
@@ -85,21 +91,23 @@ namespace SellingFastFood.Controllers
             return View(carts);
         }
 
-        public ActionResult OrderProduct(string DeliveryAdress, string NameShip, string PhoneShip) 
+        public ActionResult OrderProduct(string DeliveryAdress, string NameShip, string PhoneShip,int paymentMethod) 
         {
+            string message = $"Đặt hàng thành công. Hãy chú ý điện thoại để nhận cuộc gọi từ nhân viên giao hàng";
             List<CartModel> carts = GetListCart();
-
-            Order order = new Order();
+            
+            Models.Order order = new Models.Order();
             order.OrderName = "Đơn hàng"+"-"+ DateTime.Now.ToString("yyyyMMddHHmmss");
             order.OrderCreationeDate = DateTime.Now;
             order.OrderStatus = 1;
-            order.PaymentMethod = 1;
+            order.PaymentMethod = paymentMethod;
             order.TotalMoney= carts.Sum(s => s.Total);
             order.UserID = int.Parse(Session["UserID"].ToString());
             order.DeliveryAddress = DeliveryAdress;
             order.NameShip = NameShip;
             order.PhoneShip = PhoneShip;
-            
+
+
             da.Orders.Add(order);
             da.SaveChanges();
 
@@ -119,15 +127,175 @@ namespace SellingFastFood.Controllers
             da.SaveChanges();
             Session["CartModel"] = null;
 
+            if (paymentMethod == 1)
+            {
+/*                Sms(PhoneShip, message);*/
+                return RedirectToAction("CheckOutSuccess");
+            }
+            else if(paymentMethod==2) {
+                return PaymentWithPaypal();
+            }
+            return View();
 
-
-            return RedirectToAction("CheckOutSuccess");
         }
+
+        //paypal
 
         public ActionResult CheckOutSuccess()
         {
             return View();
         }
+
+        public ActionResult CheckOutError()
+        {
+            return View();
+        }
+        public void Sms(string phoneNumber, string message)
+        {
+            string _accountSid = ConfigurationManager.AppSettings["TwilioAccountSid"];
+            string _authToken = ConfigurationManager.AppSettings["TwilioAuthToken"];
+            string _fromPhoneNumber = ConfigurationManager.AppSettings["TwilioFromPhoneNumber"];
+
+            TwilioClient.Init(_accountSid, _authToken);
+
+            if (!phoneNumber.StartsWith("+"))
+            {
+                if (phoneNumber.StartsWith("0"))
+                {
+                    phoneNumber = phoneNumber.Substring(1);
+                }
+                phoneNumber = $"+84{phoneNumber}";
+            }
+
+            // Gửi tin nhắn
+            var messageOptions = new CreateMessageOptions(new PhoneNumber(phoneNumber))
+            {
+                From = new PhoneNumber(_fromPhoneNumber),
+                Body = message
+            };
+
+            var msg = MessageResource.Create(messageOptions);
+        }
+
+
+        public ActionResult PaymentWithPaypal(string Cancel = null)
+        {
+            APIContext apiContext = PaypalConfiguration.GetAPIContext();
+            try
+            {
+                string payerId = Request.Params["PayerID"];
+                if (string.IsNullOrEmpty(payerId))
+                {
+                    string baseURI = Request.Url.Scheme + "://" + Request.Url.Authority + "/cart/PaymentWithPayPal?";
+                    var guid = Convert.ToString((new Random()).Next(100000));
+                    var createdPayment = this.CreatePayment(apiContext, baseURI + "guid=" + guid);
+                    var links = createdPayment.links.GetEnumerator();
+                    string paypalRedirectUrl = null;
+                    while (links.MoveNext())
+                    {
+                        Links lnk = links.Current;
+                        if (lnk.rel.ToLower().Trim().Equals("approval_url"))
+                        {
+                            paypalRedirectUrl = lnk.href;
+                        }
+                    }
+                    Session.Add(guid, createdPayment.id);
+                    return Redirect(paypalRedirectUrl);
+                }
+                else
+                {
+                    var guid = Request.Params["guid"];
+                    var executedPayment = ExecutePayment(apiContext, payerId, Session[guid] as string);
+                    if (executedPayment.state.ToLower() != "approved")
+                    {
+                        return RedirectToAction("CheckOutError");
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("CheckOutError");
+
+            }
+
+            return RedirectToAction("CheckOutSuccess");
+        }
+        private PayPal.Api.Payment payment;
+        private Payment ExecutePayment(APIContext apiContext, string payerId, string paymentId)
+        {
+            var paymentExecution = new PaymentExecution()
+            {
+                payer_id = payerId
+            };
+            this.payment = new Payment()
+            {
+                id = paymentId
+            };
+            return this.payment.Execute(apiContext, paymentExecution);
+        }
+        private Payment CreatePayment(APIContext apiContext, string redirectUrl)
+        {
+            List<CartModel> carts = GetListCart();
+            var itemList = new ItemList()
+            {
+                items = new List<Item>()
+            };
+            foreach (var item in carts)
+            {
+                var priceInUSD = Math.Round((decimal)(item.Price / 25500), 2);
+                itemList.items.Add(new Item()
+                {
+                    name = item.ProductName,
+                    currency = "USD",
+                    price = priceInUSD.ToString("F2", CultureInfo.InvariantCulture),//định dạng
+                    quantity = item.Quantity.ToString(),
+                    sku = "sku"
+                });
+            }
+
+            var payer = new Payer()
+            {
+                payment_method = "paypal"
+            };
+            var redirUrls = new RedirectUrls()
+            {
+                cancel_url = redirectUrl + "&Cancel=true",
+                return_url = redirectUrl
+            };
+            var totalInUSD = Math.Round((decimal)(carts.Sum(s => s.Total) / 25500), 2);
+            var details = new Details()
+            {
+                tax = "0",
+                shipping = "0",
+                subtotal = totalInUSD.ToString("F2", CultureInfo.InvariantCulture)
+            };
+            var amount = new Amount()
+            {
+                currency = "USD",
+                total = totalInUSD.ToString("F2", CultureInfo.InvariantCulture),
+                details = details
+            };
+            var transactionList = new List<Transaction>();
+            var paypalOrderId = DateTime.Now.Ticks;
+            transactionList.Add(new Transaction()
+            {
+                description = $"Invoice #{paypalOrderId}",
+                invoice_number = paypalOrderId.ToString(),
+                amount = amount,
+                item_list = itemList
+            });
+            this.payment = new Payment()
+            {
+                intent = "sale",
+                payer = payer,
+                transactions = transactionList,
+                redirect_urls = redirUrls
+            };
+            return this.payment.Create(apiContext);
+        }
+
+
 
 
     }

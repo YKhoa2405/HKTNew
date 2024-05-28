@@ -89,7 +89,7 @@
             <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                 <div class="product-item bg-light mb-4">
                     <div class="product-img position-relative overflow-hidden">
-                        <img class="img-fluid w-100" src="@item.ImageProduct" style="max-width: 100%; max-height: 400px;" alt="@item.ImageProduct">
+                        <img class="img-fluid w-100" src="@item.ImageProduct" style="max-width: 100%; max-height: 400px; height:320px;" alt="@item.ImageProduct">
                         <div class="product-action">
                             <a class="btn btn-outline-dark btn-square" href="@Url.Action("AddToCart", "Cart", new { id = item.ProductID })"><i class="fa fa-shopping-cart"></i></a>
                             <a class="btn btn-outline-dark btn-square" href="@Url.Action("DetailProducts", "Product", new { id = item.ProductID })"><i class="fa fa-eye"></i></a>

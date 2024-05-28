@@ -39,10 +39,10 @@
             @Html.DisplayFor(modelItem => item.ProductName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ImageProduct)
+            <img src="@item.ImageProduct" alt="@item.ProductName" style="width:50px;">
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Price)
+            @string.Format("{0:#,##0} VNĐ", item.Price)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Discount)

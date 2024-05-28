@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using Twilio.Rest.Preview.Wireless.Sim;
 
 
 namespace SellingFastFood.Controllers
@@ -62,17 +63,13 @@ namespace SellingFastFood.Controllers
                 var checkUser = db.Users.SingleOrDefault(u=>u.Email.Equals(f_email) && u.Password.Equals(f_password));
                 if (checkUser != null)
                 {
-                    if (user.UserRole == 1)
-                    {
-                        Session["User"] = checkUser;
-                        Session["UserID"] = checkUser.UserID;
-                        return RedirectToAction("Index","Home");
-
-                    }
-                    else
+                    Session["User"] = checkUser;
+                    Session["UserID"] = checkUser.UserID;
+                    return RedirectToAction("Index","Home");
+/*                    else if(user.UserRole == 2)
                     {
                         return RedirectToAction("Products","Admin");
-                    }
+                    }*/
                 }
                 else
                 {

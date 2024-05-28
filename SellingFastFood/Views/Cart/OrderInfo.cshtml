@@ -19,7 +19,7 @@
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Số điện thoại</label>
-                            <input class="form-control" type="text" name="PhoneShip" placeholder="Số điện thoại" required>
+                            <input class="form-control" type="text" name="PhoneShip" placeholder="Số điện thoại (+84)" required>
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Địa chỉ</label>
@@ -53,16 +53,11 @@
                             <h6>@ViewBag.Total</h6>
 
                         </div>
-                        @*                    <div class="d-flex justify-content-between">
-                                <h6 class="font-weight-medium">Tiền ship</h6>
-                                <h6 class="font-weight-medium">10,000 VND</h6>
-                            </div>*@
                     </div>
                     <div class="pt-2">
                         <div class="d-flex justify-content-between mt-2">
                             <h5>Tổng cộng</h5>
                             <h6>@ViewBag.Total</h6>
-                            @*                        <input type="hidden" name="totalAmount" value="50" />*@
                         </div>
                     </div>
                 </div>
@@ -71,20 +66,21 @@
                     <div class="bg-light p-30">
                         <div class="form-group">
                             <div class="custom-control custom-radio d-flex justify-content-between align-items-center">
-                                <input type="radio" class="custom-control-input" name="paymentMethod" id="paypal" value="1" checked>
-                                <label class="custom-control-label mb-0" for="paypal">Thanh toán khi nhận hàng(COD)</label>
+                                <input type="radio" class="custom-control-input" name="paymentMethod" id="cod" value="1" checked>
+                                <label class="custom-control-label mb-0" for="cod">Thanh toán khi nhận hàng (COD)</label>
                                 <i class="fa fa-money-bill ml-2"></i>
                             </div>
                         </div>
-                        @*                    <div class="form-group mb-4">
-                                <div class="custom-control custom-radio d-flex justify-content-between align-items-center">
-                                    <input type="radio" class="custom-control-input" name="paymentMethod" id="banktransfer" value="2">
-                                    <label class="custom-control-label mb-0" for="banktransfer">Thanh toán qua VNPay</label>
-                                    <i class="fa fa-cc-paypal ml-2"></i>
-                                </div>
-                            </div>*@
-                        @*<a class="btn btn-block btn-primary font-weight-bold my-3 py-3" href="@Url.Action("OrderProduct","Cart")">Đặt hàng</a>*@
+                        <div class="form-group mb-4">
+                            <div class="custom-control custom-radio d-flex justify-content-between align-items-center">
+                                <input type="radio" class="custom-control-input" name="paymentMethod" id="paypal" value="2">
+                                <label class="custom-control-label mb-0" for="paypal">Thanh toán qua ví Paypal</label>
+                                <i class="fa fa-cc-paypal ml-2"></i>
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn btn-block btn-primary font-weight-bold my-3 py-3">Đặt hàng</button>
+                        <div><a href="/cart/PaymentWithPayPal">Thanh toán Paypal</a></div>
                     </div>
                 </div>
             </div>

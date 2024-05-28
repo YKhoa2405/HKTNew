@@ -1,10 +1,14 @@
 ﻿using SellingFastFood.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 
 namespace SellingFastFood.Controllers
 {
@@ -65,15 +69,35 @@ namespace SellingFastFood.Controllers
             return View(ProductEvaluate);
         }
 
-        public ActionResult ProductByCategory(int id)
+        public ActionResult ProductByCategory(int id, string sortOrder = "")
         {
+            // Lấy danh sách sản phẩm theo danh mục
+            var products = db.Products.Where(c => c.CategoryID == id);
+
+            // Sắp xếp sản phẩm theo yêu cầu
+            switch (sortOrder)
+            {
+                case "priceAsc":
+                    products = products.OrderBy(p => p.Price);
+                    break;
+                case "priceDesc":
+                    products = products.OrderByDescending(p => p.Price);
+                    break;
+                default:
+                    // Mặc định: không sắp xếp
+                    break;
+            }
+
+            // Tạo model chứa danh sách danh mục và sản phẩm đã sắp xếp
             var CategoryProduct = new CategoryProduct
             {
                 Categories = db.Categories.ToList(),
-                Products = db.Products.Where(c=>c.CategoryID==id).ToList(),
+                Products = products.ToList()
             };
+
             return View(CategoryProduct);
         }
+
 
         [HttpPost]
         public ActionResult Evaluate(Evaluate evaluare)
@@ -104,5 +128,7 @@ namespace SellingFastFood.Controllers
             var ListEvaluate = db.Evaluates.Where(e=>e.ProductID==id).ToList();
             return View(ListEvaluate);
         }
+
+
     }
 }

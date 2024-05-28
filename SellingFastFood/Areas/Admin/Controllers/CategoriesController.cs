@@ -134,11 +134,28 @@ namespace SellingFastFood.Areas.Admin.Controllers
             var topSellingProducts = db.OrderDetails
                             .Where(od => od.Order.OrderCreationeDate >= firstDayOfMonth)
                             .GroupBy(od => od.Product)
-                            .Select(g => new { Product = g.Key, QuantitySold = g.Sum(od => od.Quantity) })
-                            .OrderByDescending(x => x.QuantitySold)
+                            .OrderByDescending(g => g.Sum(od => od.Quantity))
+                            .Select(g => g.Key)
                             .Take(20)
                             .ToList();
             return View(topSellingProducts);
+        }
+
+        public ActionResult MonthlyRevenue()
+        {
+            var monthlyRevenue = db.Orders
+                .GroupBy(o => new { Year = o.OrderCreationeDate.Value.Year, Month = o.OrderCreationeDate.Value.Month })
+                .Select(g => new MonthlyRevenueViewModel
+                {
+                    Year = g.Key.Year,
+                    Month = g.Key.Month,
+                    TotalRevenue = (decimal)g.Sum(o => o.TotalMoney)
+                })
+                .OrderBy(m => m.Year)
+                .ThenBy(m => m.Month)
+                .ToList();
+
+            return View(monthlyRevenue);
         }
 
     }
