@@ -39,7 +39,7 @@ namespace SellingFastFood.Controllers
             return View(carts);
         }
 
-        public ActionResult AddToCart(int id, string  action)
+        public ActionResult AddToCart(int id)
         {
 
             if (Session["user"] == null)
@@ -52,14 +52,7 @@ namespace SellingFastFood.Controllers
             CartModel c = carts.Find(s=>s.ProductionID== id);
             if (c != null)
             {
-                if (action == "increase")
-                {
-                    c.Quantity++;
-                }
-                else if (action == "decrease" && c.Quantity > 1)
-                {
-                    c.Quantity--;
-                }
+                c.Quantity++;
             }
             else
             {
@@ -69,6 +62,36 @@ namespace SellingFastFood.Controllers
             return RedirectToAction("ListCarts");
         }
 
+        //Giảm số lượng
+        public ActionResult DecreaseQuantity(int id)
+        {
+
+            List<CartModel> carts = GetListCart();
+
+            CartModel c = carts.Find(s => s.ProductionID == id);
+            if (c != null && c.Quantity > 1)
+            {
+                c.Quantity--;
+            }
+
+            return RedirectToAction("ListCarts");
+        }
+
+        //Tăng số lượng
+        public ActionResult IncreaseQuantity(int id)
+        {
+            List<CartModel> carts = GetListCart();
+
+            CartModel c = carts.Find(s => s.ProductionID == id);
+            if (c != null)
+            {
+                c.Quantity++;
+            }
+
+            return RedirectToAction("ListCarts");
+        }
+
+        //Xóa sản phẩm
         public ActionResult DeleteProductToCart(int id)
         {
             List<CartModel> carts = GetListCart();
@@ -131,9 +154,6 @@ namespace SellingFastFood.Controllers
             {
 /*                Sms(PhoneShip, message);*/
                 return RedirectToAction("CheckOutSuccess");
-            }
-            else if(paymentMethod==2) {
-                return PaymentWithPaypal();
             }
             return View();
 

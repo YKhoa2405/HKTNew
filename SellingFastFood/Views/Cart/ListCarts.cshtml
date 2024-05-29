@@ -41,13 +41,13 @@
                             <td class="align-middle">
                                 <div class="input-group quantity mx-auto" style="width: 100px;">
                                     <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" onclick="location.href='@Url.Action("AddToCart", "Product", new { action = "decrease" })'">
+                                        <button class="btn btn-sm btn-primary btn-minus" onclick="location.href='@Url.Action("DecreaseQuantity","Cart",new {id = item.ProductionID})'">
                                             <i class="fa fa-minus"></i>
                                         </button>
                                     </div>
                                     <input type="text" class="form-control form-control-sm bg-secondary border-0 text-center quantity-input" value="@item.Quantity">
                                     <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus" onclick="location.href='@Url.Action("AddToCart", "Product", new { action = "increase" })'">
+                                        <button class="btn btn-sm btn-primary btn-minus" onclick="location.href='@Url.Action("IncreaseQuantity","Cart",new {id = item.ProductionID})'">
                                             <i class="fa fa-plus"></i>
                                         </button>
                                     </div>
@@ -91,7 +91,16 @@
                         <h5>Thành tiền:</h5>
                         <h5>@ViewBag.Total</h5>
                     </div>
-                    <a class="btn btn-block btn-primary font-weight-bold my-3 py-3" href="@Url.Action("OrderInfo","Cart")">Mua ngay</a>
+                    @if (!Model.Any())
+                    {
+                        <a class="btn btn-block btn-primary font-weight-bold my-3 py-3" href="@Url.Action("Index","Product")">Mua sắm ngay</a>
+
+                    }
+                    else
+                    {
+                        <a class="btn btn-block btn-primary font-weight-bold my-3 py-3" href="@Url.Action("OrderInfo","Cart")">Mua ngay</a>
+
+                    }
 
                 </div>
             </div>

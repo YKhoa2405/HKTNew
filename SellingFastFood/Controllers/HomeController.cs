@@ -61,15 +61,17 @@ namespace SellingFastFood.Controllers
                 var f_email = user.Email;
                 var f_password = GetMD5(user.Password);
                 var checkUser = db.Users.SingleOrDefault(u=>u.Email.Equals(f_email) && u.Password.Equals(f_password));
+                var checkAdmin = db.Users.SingleOrDefault(u=>u.Email.Equals(f_email) && u.Password.Equals(f_password) && u.UserRole==2);
+                if (checkAdmin != null)
+                {
+                    return RedirectToAction("Products", "Admin");
+
+                }
                 if (checkUser != null)
                 {
                     Session["User"] = checkUser;
                     Session["UserID"] = checkUser.UserID;
                     return RedirectToAction("Index","Home");
-/*                    else if(user.UserRole == 2)
-                    {
-                        return RedirectToAction("Products","Admin");
-                    }*/
                 }
                 else
                 {

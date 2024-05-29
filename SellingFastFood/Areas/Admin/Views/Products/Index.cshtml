@@ -5,7 +5,22 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Quản lý sản phẩm</h2>
+<div class="row">
+    <div class="col-md-6">
+        <h2>Quản lý sản phẩm</h2>
+    </div>
+    <div class="col-md-6">
+        <form action="@Url.Action("Index","Products")" method="get" class="form-inline">
+            <div class="form-group mb-2">
+                <input type="text" class="form-control" name="search" value="@Request.QueryString["search"]" placeholder="Tìm kiếm món ăn theo tên, giá, loại ...">
+            </div>
+            <button class="btn btn-primary mb-2" type="submit">
+                <i class="fa fa-search"></i> Tìm kiếm
+            </button>
+        </form>
+    </div>
+</div>
+
 
 <p>
     @Html.ActionLink("Thêm mới", "Create")
@@ -33,32 +48,33 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProductName)
-        </td>
-        <td>
-            <img src="@item.ImageProduct" alt="@item.ProductName" style="width:50px;">
-        </td>
-        <td>
-            @string.Format("{0:#,##0} VNĐ", item.Price)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Discount)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Category.CategoryName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ProductID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ProductID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ProductID })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductName)
+            </td>
+            <td>
+                <img src="@item.ImageProduct" alt="@item.ProductName" style="width:50px;">
+            </td>
+            <td>
+                @string.Format("{0:#,##0} VNĐ", item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Discount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.CategoryName)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ProductID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ProductID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ProductID })
+            </td>
+        </tr>
+    }
 
 </table>

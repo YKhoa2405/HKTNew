@@ -15,11 +15,19 @@ namespace SellingFastFood.Areas.Admin.Controllers
         private SellingFastFoodDBEntities db = new SellingFastFoodDBEntities();
 
         // GET: Admin/Products
-        public ActionResult Index()
+        public ActionResult Index(string search = "")
         {
-            var products = db.Products.Include(p => p.Category);
-            return View(products.ToList());
+            var productQuery = db.Products.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                productQuery = productQuery.Where(p => p.ProductName.Contains(search));
+            }
+
+            var products = productQuery.Include(p => p.Category).ToList();
+            return View(products);
         }
+
 
         // GET: Admin/Products/Details/5
         public ActionResult Details(int? id)

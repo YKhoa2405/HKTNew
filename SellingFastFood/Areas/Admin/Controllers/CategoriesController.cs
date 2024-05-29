@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using PayPal.Api;
 using SellingFastFood.Models;
 
 namespace SellingFastFood.Areas.Admin.Controllers
@@ -15,10 +16,19 @@ namespace SellingFastFood.Areas.Admin.Controllers
         private SellingFastFoodDBEntities db = new SellingFastFoodDBEntities();
 
         // GET: Admin/Categories
-        public ActionResult Index()
+        public ActionResult Index(string search = "")
         {
-            return View(db.Categories.ToList());
+            var categoryQuery = db.Categories.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                categoryQuery = categoryQuery.Where(c => c.CategoryName.Contains(search));
+            }
+
+            var categories = categoryQuery.ToList();
+            return View(categories);
         }
+
 
         // GET: Admin/Categories/Details/5
         public ActionResult Details(int? id)

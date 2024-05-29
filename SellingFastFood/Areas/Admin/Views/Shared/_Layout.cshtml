@@ -10,13 +10,12 @@
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <div class="navbar-header">
+            <div class="navbar-header">                
                 @Html.ActionLink("Thoát", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
                 @Html.ActionLink("Sản phẩm", "Index", "Products", new { area = "Admin" }, new { @class = "navbar-brand" })
                 @Html.ActionLink("Menu", "Index", "Categories", new { area = "Admin" }, new { @class = "navbar-brand" })
                 @Html.ActionLink("Top sản phẩm", "TopProduct", "Categories", new { area = "Admin" }, new { @class = "navbar-brand" })
                 @Html.ActionLink("Thống kê doanh thu", "MonthlyRevenue", "Categories", new { area = "Admin" }, new { @class = "navbar-brand" })
-
 
 
             </div>
