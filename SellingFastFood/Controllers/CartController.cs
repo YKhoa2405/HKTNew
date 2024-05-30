@@ -149,7 +149,7 @@ namespace SellingFastFood.Controllers
 
             Session["CartModel"] = null;
 
-            // Sms(PhoneShip, message);
+/*            Sms(PhoneShip, message);*/
             return RedirectToAction("CheckOutSuccess");
 
         }

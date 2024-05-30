@@ -31,6 +31,11 @@
                 <div>
                     <a class="btn btn-primary" href="@Url.Action("ListCarts","Cart")"><i class="fa fa-chevron-left mr-2"></i>Quay về giỏ hàng</a>
                 </div>
+                <div id="error-message" class="alert alert-danger text-center mt-4" style="display: none;">
+                    <strong>
+                        Vui lòng điền đầy đủ thông tin vào các trường!
+                    </strong>
+                </div>
             </div>
             <div class="col-lg-4">
                 <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Đơn hàng</span></h5>
@@ -73,8 +78,8 @@
                                 </div>
                             </div>*@
 
-                        <button type="submit" class="btn btn-block btn-primary font-weight-bold my-3 py-3" id="codButton">Thanh toán khi nhận hàng (COD)</button>
-                        <button type="button" class="btn btn-block btn-primary font-weight-bold my-3 py-3" id="paypalButton">Thanh toán qua ví Paypal</button>
+                        <button type="submit" class="btn btn-block btn-primary font-weight-bold my-3 py-3" id="codButton">Thanh toán khi nhận hàng (COD) <i class="fa fa-money-bill ml-2"></i></button>
+                        <button type="submit" class="btn btn-block btn-primary font-weight-bold my-3 py-3" id="paypalButton">Thanh toán qua ví Paypal <i class="fa fa-cc-paypal ml-2"></i></button>
                     </div>
                 </div>
             </div>
@@ -83,18 +88,40 @@
 }
 
 
+
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("codButton").addEventListener("click", function () {
-            document.getElementById("orderForm").action = "@Url.Action("OrderProduct", "Cart")";
-            document.getElementById("orderForm").submit();
+        document.getElementById("codButton").addEventListener("click", function (event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định của button
+            var name = document.getElementsByName("NameShip")[0].value.trim();
+            var phone = document.getElementsByName("PhoneShip")[0].value.trim();
+            var address = document.getElementsByName("DeliveryAddress")[0].value.trim();
+
+            if (name === "" || phone === "" || address === "") {
+                document.getElementById("error-message").style.display = "block"; // Hiển thị thông báo lỗi
+            } else {
+                document.getElementById("orderForm").action = "@Url.Action("OrderProduct", "Cart")";
+                document.getElementById("orderForm").submit();
+            }
         });
 
-        document.getElementById("paypalButton").addEventListener("click", function () {
-            document.getElementById("orderForm").action = "@Url.Action("PaymentWithPaypal", "Cart")"; // Thay thế "PaypalPayment" và "Cart" bằng đường dẫn tương ứng của bạn
-            document.getElementById("orderForm").submit();
+        document.getElementById("paypalButton").addEventListener("click", function (event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định của button
+            var name = document.getElementsByName("NameShip")[0].value.trim();
+            var phone = document.getElementsByName("PhoneShip")[0].value.trim();
+            var address = document.getElementsByName("DeliveryAddress")[0].value.trim();
+
+            if (name === "" || phone === "" || address === "") {
+                document.getElementById("error-message").style.display = "block"; // Hiển thị thông báo lỗi
+            } else {
+                document.getElementById("orderForm").action = "@Url.Action("PaymentWithPaypal", "Cart")";
+                document.getElementById("orderForm").submit();
+            }
         });
     });
 </script>
+
+
 
 
