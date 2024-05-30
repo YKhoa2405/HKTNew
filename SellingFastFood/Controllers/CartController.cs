@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
+using WebGrease.Activities;
 
 namespace SellingFastFood.Controllers
 {
@@ -29,15 +30,18 @@ namespace SellingFastFood.Controllers
             return carts;
         }
 
-        public ActionResult ListCarts() 
+        public ActionResult ListCarts()
         {
             List<CartModel> carts = GetListCart();
-            ViewBag.CountProduct = carts.Sum(s=>s.Quantity);
+            ViewBag.CountProduct = carts.Sum(s => s.Quantity);
 
             string formatTotal = string.Format("{0:#,##0} VNĐ", carts.Sum(s => s.Total));
             ViewBag.Total = formatTotal;
             return View(carts);
         }
+
+
+
 
         public ActionResult AddToCart(int id)
         {
@@ -114,52 +118,41 @@ namespace SellingFastFood.Controllers
             return View(carts);
         }
 
-        public ActionResult OrderProduct(string DeliveryAdress, string NameShip, string PhoneShip,int paymentMethod) 
+        public ActionResult OrderProduct(string DeliveryAddress, string NameShip, string PhoneShip)
         {
-            string message = $"Đặt hàng thành công. Hãy chú ý điện thoại để nhận cuộc gọi từ nhân viên giao hàng";
+            string message = "Đặt hàng thành công. Hãy chú ý điện thoại để nhận cuộc gọi từ nhân viên giao hàng";
             List<CartModel> carts = GetListCart();
-            
+
             Models.Order order = new Models.Order();
-            order.OrderName = "Đơn hàng"+"-"+ DateTime.Now.ToString("yyyyMMddHHmmss");
+            order.OrderName = "Đơn hàng" + "-" + DateTime.Now.ToString("yyyyMMddHHmmss");
             order.OrderCreationeDate = DateTime.Now;
             order.OrderStatus = 1;
-            order.PaymentMethod = paymentMethod;
-            order.TotalMoney= carts.Sum(s => s.Total);
+            order.PaymentMethod = 1;
+            order.TotalMoney = carts.Sum(s => s.Total);
             order.UserID = int.Parse(Session["UserID"].ToString());
-            order.DeliveryAddress = DeliveryAdress;
+            order.DeliveryAddress = DeliveryAddress;
             order.NameShip = NameShip;
             order.PhoneShip = PhoneShip;
-
 
             da.Orders.Add(order);
             da.SaveChanges();
 
-            List<OrderDetail> orderDetailList = new List<OrderDetail>();
-            foreach(var item in carts)
+            List<OrderDetail> orderDetailList = carts.Select(item => new OrderDetail
             {
-                OrderDetail od = new OrderDetail(); 
-                od.OrderID = order.OrderID;
-                od.ProductID = item.ProductionID;
-                od.Quantity= item.Quantity;
-                
-                orderDetailList.Add(od);
-                
-            }
+                OrderID = order.OrderID,
+                ProductID = item.ProductionID,
+                Quantity = item.Quantity
+            }).ToList();
 
             da.OrderDetails.AddRange(orderDetailList);
             da.SaveChanges();
+
             Session["CartModel"] = null;
 
-            if (paymentMethod == 1)
-            {
-/*                Sms(PhoneShip, message);*/
-                return RedirectToAction("CheckOutSuccess");
-            }
-            return View();
+            // Sms(PhoneShip, message);
+            return RedirectToAction("CheckOutSuccess");
 
         }
-
-        //paypal
 
         public ActionResult CheckOutSuccess()
         {
@@ -170,6 +163,8 @@ namespace SellingFastFood.Controllers
         {
             return View();
         }
+
+
         public void Sms(string phoneNumber, string message)
         {
             string _accountSid = ConfigurationManager.AppSettings["TwilioAccountSid"];
@@ -197,8 +192,7 @@ namespace SellingFastFood.Controllers
             var msg = MessageResource.Create(messageOptions);
         }
 
-
-        public ActionResult PaymentWithPaypal(string Cancel = null)
+        public ActionResult PaymentWithPaypal(string DeliveryAddress, string NameShip, string PhoneShip)
         {
             APIContext apiContext = PaypalConfiguration.GetAPIContext();
             try
@@ -206,7 +200,7 @@ namespace SellingFastFood.Controllers
                 string payerId = Request.Params["PayerID"];
                 if (string.IsNullOrEmpty(payerId))
                 {
-                    string baseURI = Request.Url.Scheme + "://" + Request.Url.Authority + "/cart/PaymentWithPayPal?";
+                    string baseURI = Request.Url.Scheme + "://" + Request.Url.Authority + "/cart/PaymentWithPaypal?";
                     var guid = Convert.ToString((new Random()).Next(100000));
                     var createdPayment = this.CreatePayment(apiContext, baseURI + "guid=" + guid);
                     var links = createdPayment.links.GetEnumerator();
@@ -235,9 +229,38 @@ namespace SellingFastFood.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return RedirectToAction("CheckOutError");
 
             }
+
+            List<CartModel> carts = GetListCart();
+
+            Models.Order order = new Models.Order();
+            order.OrderName = "Đơn hàng" + "-" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            order.OrderCreationeDate = DateTime.Now;
+            order.OrderStatus = 1;
+            order.PaymentMethod = 2;
+            order.TotalMoney = carts.Sum(s => s.Total);
+            order.UserID = int.Parse(Session["UserID"].ToString());
+            order.DeliveryAddress = DeliveryAddress;
+            order.NameShip = NameShip;
+            order.PhoneShip = PhoneShip;
+
+            da.Orders.Add(order);
+            da.SaveChanges();
+
+            List<OrderDetail> orderDetailList = carts.Select(item => new OrderDetail
+            {
+                OrderID = order.OrderID,
+                ProductID = item.ProductionID,
+                Quantity = item.Quantity
+            }).ToList();
+
+            da.OrderDetails.AddRange(orderDetailList);
+            da.SaveChanges();
+
+            Session["CartModel"] = null;
 
             return RedirectToAction("CheckOutSuccess");
         }

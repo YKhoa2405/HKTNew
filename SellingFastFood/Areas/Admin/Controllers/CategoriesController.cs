@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -92,12 +93,26 @@ namespace SellingFastFood.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(category).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    db.Entry(category).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    foreach (var validationErrors in ex.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            ModelState.AddModelError(validationError.PropertyName, validationError.ErrorMessage);
+                        }
+                    }
+                }
             }
             return View(category);
         }
+
 
         // GET: Admin/Categories/Delete/5
         public ActionResult Delete(int? id)
@@ -141,9 +156,12 @@ namespace SellingFastFood.Areas.Admin.Controllers
 
             var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
 
+            var firstDayOfNextMonth = firstDayOfMonth.AddMonths(1);
+
+
             var topSellingProducts = db.OrderDetails
-                            .Where(od => od.Order.OrderCreationeDate >= firstDayOfMonth)
-                            .GroupBy(od => od.Product)
+                            .Where(od => od.Order.OrderCreationeDate >= firstDayOfMonth && od.Order.OrderCreationeDate < firstDayOfNextMonth)
+                            .GroupBy(od => od.Product)  // Sử dụng ProductID để nhóm
                             .OrderByDescending(g => g.Sum(od => od.Quantity))
                             .Select(g => g.Key)
                             .Take(20)

@@ -86,6 +86,19 @@
     <Property Name="Avatar" Type="nvarchar(max)" />
     <Property Name="UserRole" Type="int" />
   </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'SellingFastFoodDB.dbo.Voucher' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="Voucher">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Code" Type="nchar" MaxLength="20" />
+    <Property Name="DiscountAmount" Type="decimal" Precision="18" Scale="0" />
+    <Property Name="ExpiryDate" Type="datetime" />
+    <Property Name="Status" Type="bit" />
+    <Property Name="StartDate" Type="datetime" />
+  </EntityType>
   <Association Name="FK_Evaluate_Product">
     <End Role="Product" Type="Self.Product" Multiplicity="0..1" />
     <End Role="Evaluate" Type="Self.Evaluate" Multiplicity="*" />
@@ -179,6 +192,16 @@
     <EntitySet Name="Shipper" EntityType="Self.Shipper" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Voucher" EntityType="Self.Voucher" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [Voucher].[id] AS [id], 
+    [Voucher].[Code] AS [Code], 
+    [Voucher].[DiscountAmount] AS [DiscountAmount], 
+    [Voucher].[ExpiryDate] AS [ExpiryDate], 
+    [Voucher].[Status] AS [Status], 
+    [Voucher].[StartDate] AS [StartDate]
+    FROM [dbo].[Voucher] AS [Voucher]</DefiningQuery>
+    </EntitySet>
     <AssociationSet Name="FK_Evaluate_Product" Association="Self.FK_Evaluate_Product">
       <End Role="Product" EntitySet="Product" />
       <End Role="Evaluate" EntitySet="Evaluate" />

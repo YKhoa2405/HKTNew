@@ -66,11 +66,11 @@
             </table>
         </div>
         <div class="col-lg-4">
-            <form class="mb-30" action="">
+            <form class="mb-30" action="#" method="post">
                 <div class="input-group">
-                    <input type="text" class="form-control border-0 p-4" placeholder="Mã giảm giá">
+                    <input type="text" name="code" class="form-control border-0 p-4" placeholder="Mã giảm giá">
                     <div class="input-group-append">
-                        <button class="btn btn-primary">Áp dụng</button>
+                        <button type="submit" class="btn btn-primary">Áp dụng</button>
                     </div>
                 </div>
             </form>
@@ -81,15 +81,15 @@
                         <h6>Tạm tính:</h6>
                         <h6>@ViewBag.Total</h6>
                     </div>
-@*                    <div class="d-flex justify-content-between">
-                        <h6 class="font-weight-medium">Tiền ship:</h6>
-                        <h6 class="font-weight-medium">10.000 VNĐ</h6>
-                    </div>*@
+                    <div class="d-flex justify-content-between">
+                        <h6 class="font-weight-medium">Giảm giá:</h6>
+                        <h6 class="font-weight-medium">@ViewBag.discountAmount</h6>
+                    </div>
                 </div>
                 <div class="pt-2">
                     <div class="d-flex justify-content-between mt-2">
                         <h5>Thành tiền:</h5>
-                        <h5>@ViewBag.Total</h5>
+                        <h5>@ViewBag.formatFinalTotal</h5>
                     </div>
                     @if (!Model.Any())
                     {
@@ -103,6 +103,12 @@
                     }
 
                 </div>
+                @if (!string.IsNullOrEmpty(ViewBag.Message))
+                {
+                    <div class="alert alert-info">
+                        @ViewBag.Message
+                    </div>
+                }
             </div>
         </div>
     </div>

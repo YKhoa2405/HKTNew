@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/BaseView.cshtml";
 }
 
-@using (Html.BeginForm("OrderProduct", "Cart", FormMethod.Post))
+@using (Html.BeginForm("OrderProduct", "Cart", FormMethod.Post, new { id = "orderForm" }))
 {
     <div class="container-fluid">
         <div class="row px-xl-5">
@@ -23,7 +23,7 @@
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Địa chỉ</label>
-                            <input class="form-control" type="text" name="DeliveryAdress" placeholder="Đường số 1, nhà số 1" required>
+                            <input class="form-control" type="text" name="DeliveryAddress" placeholder="Đường số 1, nhà số 1" required>
                         </div>
                     </div>
                 </div>
@@ -64,28 +64,37 @@
                 <div class="mb-5">
                     <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Thanh toán</span></h5>
                     <div class="bg-light p-30">
-                        <div class="form-group">
-                            <div class="custom-control custom-radio d-flex justify-content-between align-items-center">
-                                <input type="radio" class="custom-control-input" name="paymentMethod" id="cod" value="1" checked>
-                                <label class="custom-control-label mb-0" for="cod">Thanh toán khi nhận hàng (COD)</label>
-                                <i class="fa fa-money-bill ml-2"></i>
-                            </div>
-                        </div>
-                        <div class="form-group mb-4">
-                            <div class="custom-control custom-radio d-flex justify-content-between align-items-center">
-                                <input type="radio" class="custom-control-input" name="paymentMethod" id="paypal" value="2">
-                                <label class="custom-control-label mb-0" for="paypal">Thanh toán qua ví Paypal</label>
-                                <i class="fa fa-cc-paypal ml-2"></i>
-                            </div>
-                        </div>
 
-                        <button type="submit" class="btn btn-block btn-primary font-weight-bold my-3 py-3">Đặt hàng</button>
-                        <div><a href="/cart/PaymentWithPayPal">Thanh toán Paypal</a></div>
+                        @*                        <div class="form-group">
+                                <div class="custom-control custom-radio d-flex justify-content-between align-items-center">
+                                    <input type="radio" class="custom-control-input" name="paymentMethod" id="cod" value="1" checked>
+                                    <label class="custom-control-label mb-0" for="cod">Thanh toán khi nhận hàng (COD)</label>
+                                    <i class="fa fa-money-bill ml-2"></i>
+                                </div>
+                            </div>*@
+
+                        <button type="submit" class="btn btn-block btn-primary font-weight-bold my-3 py-3" id="codButton">Thanh toán khi nhận hàng (COD)</button>
+                        <button type="button" class="btn btn-block btn-primary font-weight-bold my-3 py-3" id="paypalButton">Thanh toán qua ví Paypal</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 }
-    
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("codButton").addEventListener("click", function () {
+            document.getElementById("orderForm").action = "@Url.Action("OrderProduct", "Cart")";
+            document.getElementById("orderForm").submit();
+        });
+
+        document.getElementById("paypalButton").addEventListener("click", function () {
+            document.getElementById("orderForm").action = "@Url.Action("PaymentWithPaypal", "Cart")"; // Thay thế "PaypalPayment" và "Cart" bằng đường dẫn tương ứng của bạn
+            document.getElementById("orderForm").submit();
+        });
+    });
+</script>
+
 

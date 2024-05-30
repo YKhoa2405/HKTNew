@@ -10,11 +10,7 @@
     <div class="row">
         <div class="col-md-4">
             <div class="profile-img">
-                <img src="@UserLogin.Avatar" alt="Ảnh hồ sơ" />
-                <div class="file btn btn-lg btn-primary">
-                    Change Photo
-                    <input type="file" name="file" />
-                </div>
+                <img src="~/Content/image/user.png" alt="Ảnh hồ sơ" />
             </div>
         </div>
         <div class="col-md-6">
@@ -30,9 +26,6 @@
                     </li>
                 </ul>
             </div>
-        </div>
-        <div class="col-md-2">
-            <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Edit Profile" />
         </div>
     </div>
     <div class="row">
@@ -79,9 +72,10 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Tên đơn hàng</th>
+                    <th>Mã đơn</th>
                     <th>Ngày đặt</th>
                     <th>Địa chỉ giao hàng</th>
+                    <th>Sản phẩm</th>
                     <th>Tổng thanh toán</th>
                     <th>Phương thức thanh toán</th>
                 </tr>
@@ -92,9 +86,19 @@
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <td>@item.OrderName</td>
+                                <td>@item.OrderID</td>
                                 <td>@item.OrderCreationeDate</td>
                                 <td>@item.DeliveryAddress</td>
+                                <td>
+                                    @foreach (var chitiet in ViewBag.listOrderDetail)
+                                    {
+                                        if (chitiet.OrderID == item.OrderID)
+                                        {
+                                            <span>@chitiet.Product.ProductName  x  @chitiet.Quantity</span> <br />
+                                        }
+                                    }
+                                </td>
+
                                 <td>@string.Format("{0:#,##0} VNĐ", item.TotalMoney)</td>
                                 @if (@item.PaymentMethod == 1)
                                 {

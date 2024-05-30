@@ -21,15 +21,19 @@ namespace SellingFastFood.Controllers
 
             var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
 
+            var firstDayOfNextMonth = firstDayOfMonth.AddMonths(1);
+
+
             var topSellingProducts = db.OrderDetails
-                            .Where(od => od.Order.OrderCreationeDate >= firstDayOfMonth)
-                            .GroupBy(od => od.Product)
+                            .Where(od => od.Order.OrderCreationeDate >= firstDayOfMonth && od.Order.OrderCreationeDate < firstDayOfNextMonth)
+                            .GroupBy(od => od.Product)  // Sử dụng ProductID để nhóm
                             .OrderByDescending(g => g.Sum(od => od.Quantity))
                             .Select(g => g.Key)
                             .Take(20)
                             .ToList();
             return View(topSellingProducts);
         }
+
 
         [HttpGet]
         public ActionResult Register()
