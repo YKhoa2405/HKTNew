@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="f48b873d49384c9da083402094d92331" Name="Diagram1">
+        <EntityTypeShape EntityType="SellingFastFoodDBModel.Category" Width="1.5" PointX="0.75" PointY="3" IsExpanded="true" />
+        <EntityTypeShape EntityType="SellingFastFoodDBModel.Evaluate" Width="1.5" PointX="5.25" PointY="2.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="SellingFastFoodDBModel.Order" Width="1.5" PointX="6" PointY="11" IsExpanded="true" />
+        <EntityTypeShape EntityType="SellingFastFoodDBModel.OrderDetail" Width="1.5" PointX="8.25" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="SellingFastFoodDBModel.Product" Width="1.5" PointX="3" PointY="2.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="SellingFastFoodDBModel.Shipper" Width="1.5" PointX="3.75" PointY="12" IsExpanded="true" />
+        <EntityTypeShape EntityType="SellingFastFoodDBModel.sysdiagram" Width="1.5" PointX="5.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="SellingFastFoodDBModel.User" Width="1.5" PointX="3" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="SellingFastFoodDBModel.Voucher" Width="1.5" PointX="7.75" PointY="5.75" IsExpanded="true" />
+        <AssociationConnector Association="SellingFastFoodDBModel.FK_Product_Category" ManuallyRouted="false" />
+        <AssociationConnector Association="SellingFastFoodDBModel.FK_Evaluate_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="SellingFastFoodDBModel.FK_Evaluate_User" ManuallyRouted="false" />
+        <AssociationConnector Association="SellingFastFoodDBModel.FK_Order_Shipper" ManuallyRouted="false" />
+        <AssociationConnector Association="SellingFastFoodDBModel.FK_Order_User" ManuallyRouted="false" />
+        <AssociationConnector Association="SellingFastFoodDBModel.FK_OrderDetail_Order" ManuallyRouted="false" />
+        <AssociationConnector Association="SellingFastFoodDBModel.FK_OrderDetail_Product" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
